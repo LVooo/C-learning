@@ -756,4 +756,4 @@ sizeof(char *) // 输出8(x64) 输出4(x86)
 用途：初始化指针变量  
 注意：空指针指向的内存是不可以访问到  
 输出：
-![null pointer](\cppLearning\img\null_pointer.jpg)
+![null pointer](https://github.com/LVooo/cppLearning/blob/main/img/null_pointer.png)
