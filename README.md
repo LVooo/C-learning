@@ -755,5 +755,301 @@ sizeof(char *) // 输出8(x64) 输出4(x86)
 空指针：指针变量指向内存中编号为0的空间  
 用途：初始化指针变量  
 注意：空指针指向的内存是不可以访问到  
-输出：
+```cpp
+// 1.空指针用于给指针变量进行初始化
+int *p = NULL;
+
+// 2.空指针是不可以访问的
+// 0-255之间的内存编号是系统占用的，因此不可以访问
+*p = 100;
+```
+>输出：  
 ![null pointer](https://github.com/LVooo/cppLearning/blob/main/img/null_pointer.png)
+
+- **野指针**  
+```cpp
+// 指向内存被释放的内存或者没有访问权限的内存的指针
+int *p = (int *)0x1100;
+```
+>输出：  
+![null pointer](https://github.com/LVooo/cppLearning/blob/main/img/null_pointer.png2)
+
+>小结：空指针和野指针都不是我们申请的空间，因此不要访问
+
+- **const修饰指针**  
+三种情况：
+1. const修饰指针——常量指针
+2. const修饰常量——指针常量
+3. const既修饰指针，又修饰常量  
+ex：
+```cpp
+// 1.常量指针
+// 指针指向的值不可以改，指针的指向可以改
+int a = 10;
+int b = 10;
+
+const int* p = &a;
+*p = 20; // 错误
+p = &b; // 正确
+
+// 2.指针常量
+// 指针的指向不可以改，指针指向的值可以改
+int *const p2 = &a;
+*p2 = 20; // 正确
+p2 = &b; //错误
+
+// 3.const同时修饰
+// 都不可以改
+const int * const p3;
+```
+
+- **指针和数组**  
+作用：利用指针访问数组元素  
+数组本身就是一个“指针”，记录内存空间地址
+```cpp
+int arr[5] = {1, 2, 3, 4, 5};
+cout << arr[0]; // 1
+
+int *p = arr;
+cout << *p; // 1
+p ++;
+cout << *p; // 2
+```
+
+- **指针和函数**  
+作用：利用指针作为函数参数，可以修改实参的值  
+如果不想修改实参，就用值传递，如果想修改实参，就用地址传递
+```cpp
+#include <iostream>
+using namespace std;
+
+void swap(int *a, int *b)
+{
+	int tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+int main()
+{
+	int a = 10;
+	int b = 20;
+
+	swap(a, b); // or swap(&a, &b)
+	cout << "a =" << a << " b =" << b << endl;
+	return 0;
+}
+```
+
+- **指针、数组、函数**  
+对数组的冒泡排序
+```cpp
+#include <iostream>
+using namespace std;
+
+void bubble(int* arr, int len)
+{
+	for (int i = 0; i < len - 1; i++)
+	{
+		for (int j = 0; j < len - i - 1; j++)
+		{
+			if (arr[j] > arr[j + 1])
+			{
+				int tmp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = tmp;
+			}
+		}
+	}
+}
+
+void printArray(int *array, int len) // 因为数组本身就是一个"指针"，如果形参不带*调用时会报错 or 写成int array[]
+{
+	for (int i = 0; i < len; i++)
+	{
+		cout << array[i] << " ";
+	}
+}
+
+int main()
+{
+	int arr[10] = { 4, 3, 2, 5, 1, 2, 6, 8, 9, 8 };
+	int len = sizeof(arr) / sizeof(arr[0]);
+	
+	bubble(arr, len);
+	printArray(arr, len); 
+
+	return 0;
+}
+```
+
+&nbsp;
+## 八、结构体
+结构体属于用户**自定义的数据类型**，允许用户存储不同的数据类型  
+- **定义和使用**  
+语法：struct 结构体名 {结构体成员列表}  
+通过结构体创建变量的方式有三种：
+	- struct 结构体名 变量名
+	- struct 结构体名 变量名 = {成员1值，成员2值...}
+	- 定义结构体时顺便创建变量 
+```cpp
+struct Student
+{
+	string name;
+	int age;
+	int score;
+}s3; // 顺便创建的结构体变量
+
+int main()
+{
+	// struct关键字可以省略
+	// 第一种
+	Student s1;
+	s1.name = "李四";
+	cout << s1.name << endl;
+
+	// 第二种
+	struct Student s2 = { "张三", 12, 33 };
+	cout << s2.score << endl;
+
+	// 第三种
+	s3.age = 23;
+	cout << s3.age << endl; 
+
+	return 0;
+}
+```
+>小结：  
+定义结构体时的关键字是```struct```，不可以省略  
+创建结构体变量时，关键字```struct```可以省略  
+结构体变量利用操作符```.```访问成员
+
+- **结构体数组**  
+作用：将自定义的结构体放入到数组中方便维护  
+语法：```struct 结构体名 数组名[元素个数] = {{}, {}, ..., {}}```
+```cpp
+struct Student
+{
+	string name;
+	int age;
+	int score;
+}s3;
+
+int main()
+{
+	Student s1[3] =
+	{
+		{ "张三", 12, 33 },
+		{ "张2", 12, 33 },
+		{ "张1", 12, 33 }
+	};
+
+	s1[2].name = "赵云";
+	for (int i = 0; i < 3; i++)
+	{
+		cout << s1[i].name << " " << s1[i].age << " " << s1[i].score << endl;
+	}
+
+	return 0;
+}
+```
+
+- **结构体指针**  
+作用：通过指针访问结构体中的成员  
+利用操作符```->```可以通过结构体指针访问结构体属性  
+ex：
+```cpp
+Student s1 = { "张三", 12, 33 };
+Student* p = &s1;
+cout << p->name << endl;
+
+// or
+Student s1[3] =
+{
+	{ "张三", 12, 33 },
+	{ "张2", 12, 33 },
+	{ "张1", 12, 33 }
+};
+
+Student* p = s1; // 因为定义的是结构体数组，相当于指针，所以不需要取地址符
+for (int i = 0; i < 3; i++)
+{
+	cout << p->name << endl;
+	p++;
+}
+```
+
+- **结构体嵌套结构体**  
+作用：结构体中的成员可以是另一个结构体  
+ex：老师包含学生
+```cpp
+struct student
+{
+	string name;
+	int age;
+	int score;
+};
+
+struct teacher
+{
+	string name;
+	int age;
+	int score;
+	struct student stu;
+};
+
+int main()
+{
+	teacher t;
+	t.stu.name = "小李";
+}
+```
+
+- **结构体做函数参数**  
+作用：将结构体作为参数向函数中传递  
+两种方式：  
+	- 值传递  
+	- 地址传递
+
+ex：
+```cpp
+struct Student
+{
+	string name;
+	int age;
+	int score;
+}s3;
+
+void printStudent1(Student s)
+{
+	s.age = 2;
+}
+
+void printStudent2(Student *s)
+{
+	s->age = 2;
+}
+
+int main()
+{
+	Student s = { "张三", 13, 33 };
+
+	printStudent1(s);
+	cout << s.age << endl; // 13
+	printStudent2(&s);
+	cout << s.age << endl; // 2
+
+	return 0;
+}
+```
+
+- **结构体中的const**  
+作用：用```const```来防止误操作  
+ex：
+```cpp
+// 将函数中的形参改为指针，可以减少内存空间，而且不会复制新的副本出来
+void printStudent2(const Student *s)
+{
+	s->age = 2; // 因为形参中加入了const，此处修改会报错
+}
+```
