@@ -289,12 +289,10 @@ int main()
 			break;
 		case(0):
 			cout << "已退出，欢迎下次再来" << endl;
-			break;
+			system("pause");
+			return 0;
 		default:
 			break;
 		}
 	}
-
-	system("pause");
-	return 0;
 }
