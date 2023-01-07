@@ -127,7 +127,7 @@ void WorkerManager::Add_Emp()
 				worker = new Boss(id, name, 3);
 				break;
 			default:
-				cout << "输入有误，重新输入：";
+				cout << "输入有误，重新输入："; // 此处有bug，应用while循环判断
 			}
 
 			newSpace[this->m_EmpNum + i] = worker;
